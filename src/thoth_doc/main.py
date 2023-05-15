@@ -96,8 +96,6 @@ class DocGenerator:
         compiled_markdown = ''
         cwd = os.getcwd()
         base = filepath.replace(self.docs_folder, '')
-        folder = '/'.join(base.split('/')[:-1])
-        name = base.split('/')[-1]
 
         with open(filepath) as f:
             markdown = f.readlines()
@@ -115,7 +113,7 @@ class DocGenerator:
                 line = line.replace(match[0], docstring)
             compiled_markdown += line
 
-        with open(f'{cwd}/{self.compiled_docs_folder}{folder}/{name}', 'w') as f:
+        with open(f'{cwd}/{self.compiled_docs_folder}{base}', 'w') as f:
             f.write(compiled_markdown)
 
     def create_folder_structure(self):
@@ -124,7 +122,7 @@ class DocGenerator:
 
         for root, dirs, files in os.walk(self.docs_folder):
             for dir in dirs:
-                path = f'{cwd}/{self.compiled_docs_folder}/{dir}'
+                path = f'{cwd}/{self.compiled_docs_folder}/{root.replace(self.docs_folder, "")}/{dir}'
                 os.makedirs(path, exist_ok=True)
 
     def generate(self):

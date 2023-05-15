@@ -1,3 +1,4 @@
+import os
 import re
 
 RE_REFERENCE = r'(\[@(.+?)\])'
@@ -86,10 +87,55 @@ def get_docstring(filepath, name):
     return docstring
 
 
-class Parser:
+class DocGenerator:
     def __init__(self, docs_folder, compiled_docs_folder):
         self.docs_folder = docs_folder
         self.compiled_docs_folder = compiled_docs_folder
+
+    def parse_file(self, filepath):
+        compiled_markdown = ''
+        cwd = os.getcwd()
+        base = filepath.replace(self.docs_folder, '')
+        folder = '/'.join(base.split('/')[:-1])
+        name = base.split('/')[-1]
+
+        with open(filepath) as f:
+            markdown = f.readlines()
+
+        for line in markdown:
+            matches = re.findall(RE_REFERENCE, line)
+            if not matches:
+                compiled_markdown += line
+                continue
+
+            for match in matches:
+                mod, name = match[1].split('#')
+                docstring = get_docstring(mod, name)
+                docstring = remove_whitespaces(docstring)
+                line = line.replace(match[0], docstring)
+            compiled_markdown += line
+
+        with open(f'{cwd}/{self.compiled_docs_folder}{folder}/{name}', 'w') as f:
+            f.write(compiled_markdown)
+
+    def create_folder_structure(self):
+        cwd = os.getcwd()
+        os.makedirs(cwd + self.compiled_docs_folder, exist_ok=True)
+
+        for root, dirs, files in os.walk(self.docs_folder):
+            for dir in dirs:
+                path = f'{cwd}/{self.compiled_docs_folder}/{dir}'
+                os.makedirs(path, exist_ok=True)
+
+    def generate(self):
+        self.create_folder_structure()
+
+        for root, dirs, files in os.walk(self.docs_folder):
+            for file in files:
+                if file.endswith('.md'):
+                    self.parse_file(os.path.join(root, file))
+                else:
+                    os.system(f'cp {os.path.join(root, file)} {self.compiled_docs_folder}/{root.replace(self.docs_folder, "")}')
 
 
 if __name__ == '__main__':

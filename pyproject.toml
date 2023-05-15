@@ -8,7 +8,7 @@ version = "0.0.1"
 authors = [
   { name="Lev", email="smj510black@gmail.com" },
 ]
-description = "Dependency-free, lightweight documentation generator"
+description = "Dependency-free, lightweight docstring parser"
 readme = "README.md"
 requires-python = ">=3.7"
 classifiers = [

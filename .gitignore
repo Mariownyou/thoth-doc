@@ -1,3 +1,5 @@
 code/
 docs_compiled/
 docs/
+dist/
+*.pyc

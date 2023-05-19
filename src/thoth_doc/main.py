@@ -118,7 +118,7 @@ class DocGenerator:
 
     def create_folder_structure(self):
         cwd = os.getcwd()
-        os.makedirs(cwd + self.compiled_docs_folder, exist_ok=True)
+        os.makedirs(f'{cwd}/{self.compiled_docs_folder}', exist_ok=True)
 
         for root, dirs, files in os.walk(self.docs_folder):
             for dir in dirs:

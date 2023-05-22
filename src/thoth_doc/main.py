@@ -110,6 +110,7 @@ class DocGenerator:
                 mod, name = match[1].split('#')
                 docstring = get_docstring(mod, name)
                 docstring = remove_whitespaces(docstring)
+                docstring = docstring.replace('\n', '\n\n')
                 line = line.replace(match[0], docstring)
             compiled_markdown += line
 

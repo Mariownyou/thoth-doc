@@ -1,5 +1,5 @@
 # Thoth doc: Dependency-free, lightweight docstring parser
-![Thoth image](Thoth.svg.png =250x250)
+![Thoth image](Thoth.svg.png)
 
 
 ## Installation

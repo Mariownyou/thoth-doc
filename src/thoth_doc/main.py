@@ -88,6 +88,8 @@ def get_docstring(filepath, name):
 
 
 class DocGenerator:
+    parsers = []
+
     def __init__(self, docs_folder, compiled_docs_folder):
         self.docs_folder = docs_folder
         self.compiled_docs_folder = compiled_docs_folder
@@ -101,10 +103,18 @@ class DocGenerator:
             markdown = f.readlines()
 
         for line in markdown:
-            matches = re.findall(RE_REFERENCE, line)
-            if not matches:
-                compiled_markdown += line
+            skip = False
+            for parser in self.parsers:
+                parsed = parser(line)
+                if parsed is not None:
+                    compiled_markdown += parsed
+                    skip = True
+                    break
+
+            if skip:
                 continue
+
+            matches = re.findall(r'(\[@(.+?)\])', line)
 
             for match in matches:
                 mod, name = match[1].split('#')
@@ -112,6 +122,7 @@ class DocGenerator:
                 docstring = remove_whitespaces(docstring)
                 docstring = docstring.replace('\n', '\n\n')
                 line = line.replace(match[0], docstring)
+
             compiled_markdown += line
 
         with open(f'{cwd}/{self.compiled_docs_folder}{base}', 'w') as f:

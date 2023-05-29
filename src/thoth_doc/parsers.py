@@ -5,7 +5,7 @@ from .utils import get_docstring, remove_whitespaces
 
 
 def code_reference_parser(line):
-    ''' Parses [@code/main.py#Class.function] syntax. Extacts docstring. '''
+    ''' Parses [@code/main.py#Class.method] syntax. Extacts docstring. '''
 
     matches = re.findall(r'(\[@(.+?)\])', line)
     if matches:

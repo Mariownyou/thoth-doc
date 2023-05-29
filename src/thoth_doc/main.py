@@ -37,6 +37,8 @@ class DocGenerator:
                 if parsed is not None:
                     compiled_markdown += parsed
                     break
+            if parsed is None:
+                compiled_markdown += line
         return compiled_markdown
 
     def _create_folder_structure(self):

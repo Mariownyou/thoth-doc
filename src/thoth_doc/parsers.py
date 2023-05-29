@@ -1,6 +1,22 @@
 import os
 import re
 
+from thoth_doc.utils import get_docstring
+
+
+def code_reference_parser(line):
+    ''' Parses [@code/main.py#Class.function] syntax. Extacts docstring. '''
+
+    matches = re.findall(r'(\[@(.+?)\])', line)
+    if matches:
+        for match in matches:
+            mod, name = match[1].split('#')
+            docstring = get_docstring(mod, name)
+            docstring = docstring.replace('\n', '\n\n')
+            line = line.replace(match[0], docstring)
+        return line
+    return None
+
 
 def env_var_parser(line):
     ''' Parses [$env.ENV_VAR_NAME] syntax '''

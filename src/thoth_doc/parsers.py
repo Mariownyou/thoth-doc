@@ -1,7 +1,7 @@
 import os
 import re
 
-from thoth_doc.utils import get_docstring
+from .utils import get_docstring, remove_whitespaces
 
 
 def code_reference_parser(line):
@@ -12,6 +12,7 @@ def code_reference_parser(line):
         for match in matches:
             mod, name = match[1].split('#')
             docstring = get_docstring(mod, name)
+            docstring = remove_whitespaces(docstring)
             docstring = docstring.replace('\n', '\n\n')
             line = line.replace(match[0], docstring)
         return line

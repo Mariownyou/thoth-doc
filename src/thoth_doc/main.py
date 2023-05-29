@@ -1,6 +1,6 @@
 import os
 
-from thoth_doc.parsers import code_reference_parser
+from .parsers import code_reference_parser
 
 
 class DocGenerator:
@@ -12,15 +12,20 @@ class DocGenerator:
         self.docs_folder = docs_folder
         self.compiled_docs_folder = compiled_docs_folder
 
-    def write_file(self, lines, filepath):
+    def _get_compiled_folder_path(self, path=None):
         cwd = os.getcwd()
+        if path and path.startswith('/'):
+            path = path[1:]
+        return f'{cwd}/{self.compiled_docs_folder}/{path}' if path else f'{cwd}/{self.compiled_docs_folder}'
+
+    def _write_file(self, lines, filepath):
         base = filepath.replace(self.docs_folder, '')
-        path = f'{cwd}/{self.compiled_docs_folder}{base}'
+        path = self._get_compiled_folder_path(base)
 
         with open(path, 'w') as f:
             f.write(lines)
 
-    def parse_file(self, filepath):
+    def _parse_file(self, filepath):
         compiled_markdown = ''
 
         with open(filepath) as f:
@@ -34,26 +39,26 @@ class DocGenerator:
                     break
         return compiled_markdown
 
-    def create_folder_structure(self):
-        cwd = os.getcwd()
-        os.makedirs(f'{cwd}/{self.compiled_docs_folder}', exist_ok=True)
+    def _create_folder_structure(self):
+        compiled_path = self._get_compiled_folder_path()
+        os.makedirs(compiled_path, exist_ok=True)
 
         for root, dirs, files in os.walk(self.docs_folder):
             for dir in dirs:
-                path = f'{cwd}/{self.compiled_docs_folder}/{root.replace(self.docs_folder, "")}/{dir}'
+                path = f'{compiled_path}/{root.replace(self.docs_folder, "")}/{dir}'
                 os.makedirs(path, exist_ok=True)
 
     def generate(self):
-        self.create_folder_structure()
+        self._create_folder_structure()
 
         for root, dirs, files in os.walk(self.docs_folder):
             for file in files:
+                path = os.path.join(root, file)
                 if file.endswith('.md'):
-                    path = os.path.join(root, file)
-                    compiled_lines = self.parse_file(path)
-                    self.write_file(compiled_lines, path)
+                    compiled_lines = self._parse_file(path)
+                    self._write_file(compiled_lines, path)
                 else:
-                    os.system(f'cp {os.path.join(root, file)} {self.compiled_docs_folder}/{root.replace(self.docs_folder, "")}')
+                    os.system(f'cp {path} {self._get_compiled_folder_path()}/{root.replace(self.docs_folder, "")}')
 
 
 if __name__ == '__main__':

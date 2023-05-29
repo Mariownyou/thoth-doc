@@ -1,11 +1,11 @@
 import os
-import re
 
 from thoth_doc.parsers import code_reference_parser
 
 
 class DocGenerator:
     parsers = []
+    _default_parsers = [code_reference_parser]
     output_dirs = []
 
     def __init__(self, docs_folder, compiled_docs_folder):
@@ -27,21 +27,11 @@ class DocGenerator:
             markdown = f.readlines()
 
         for line in markdown:
-            skip = False
-            for parser in self.parsers:
+            for parser in self.parsers + self._default_parsers:
                 parsed = parser(line)
                 if parsed is not None:
                     compiled_markdown += parsed
-                    skip = True
                     break
-
-            if skip:
-                continue
-
-            default_parser = code_reference_parser(line)
-            if default_parser is not None:
-                line = default_parser
-            compiled_markdown += line
         return compiled_markdown
 
     def create_folder_structure(self):

@@ -19,8 +19,19 @@ class DocGenerator:
 
     def _compile_lines(self, markdown_lines):
         compiled_markdown = ''
+        skip = False
 
         for line in markdown_lines:
+            if line.startswith('[ignore]'):
+                skip = True
+                continue
+            elif line.startswith('[endignore]'):
+                skip = False
+                continue
+            elif skip:
+                compiled_markdown += line
+                continue
+
             for parser in self.parsers + self._default_parsers:
                 parsed = parser(line)
                 if parsed is not None:

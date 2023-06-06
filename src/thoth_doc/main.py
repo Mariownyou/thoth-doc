@@ -1,6 +1,7 @@
 import os
 
-from .parsers import code_reference_parser
+from thoth_doc.parsers import code_reference_parser
+
 
 
 class DocGenerator:
@@ -33,7 +34,7 @@ class DocGenerator:
                 continue
 
             for parser in self.parsers + self._default_parsers:
-                parsed = parser(line)
+                parsed = parser(self, line)
                 if parsed is not None:
                     compiled_markdown += parsed
                     break
@@ -111,4 +112,5 @@ class MultiOutputDocGenerator(DocGenerator):
 
 if __name__ == '__main__':
     generator = DocGenerator('docs', 'docs_compiled')
+    generator.image_folder = 'images'
     generator.generate()

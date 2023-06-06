@@ -1,10 +1,22 @@
 import os
 import re
 
-from .utils import get_docstring, remove_whitespaces
+from thoth_doc.utils import get_docstring, remove_whitespaces
 
 
-def code_reference_parser(line):
+def add_image_host_to_image_links(generator, line):
+    ''' Adds image host to image links. '''
+
+    host = getattr(generator, 'image_host', None)
+    matches = re.findall(r'(!\[.*?\]\((.*?)\))', line)
+    if matches and host:
+        for match in matches:
+            line = line.replace(match[1], f'{host}/{match[1]}')
+        return line
+    return None
+
+
+def code_reference_parser(_, line):
     ''' Parses [@code/main.py#Class.method] syntax. Extacts docstring. '''
 
     matches = re.findall(r'(\[@(.+?)\])', line)
@@ -19,7 +31,7 @@ def code_reference_parser(line):
     return None
 
 
-def env_var_parser(line):
+def env_var_parser(_, line):
     ''' Parses [$env.ENV_VAR_NAME] syntax '''
 
     matches = re.findall(r'(\[\$env\.(\w+)\])', line)
@@ -31,7 +43,7 @@ def env_var_parser(line):
     return None
 
 
-def django_settings_parser(line):
+def django_settings_parser(_, line):
     ''' Parses [$settings.SETTINGS_VAR_NAME] syntax '''
 
     matches = re.findall(r'(\[\$settings\.(\w+)\])', line)

@@ -6,6 +6,7 @@ from thoth_doc.parsers import code_reference_parser
 
 class DocGenerator:
     parsers = []
+    image_host = None
     _default_parsers = [code_reference_parser]
 
     def __init__(self, docs_folder, compiled_docs_folder):
@@ -33,13 +34,11 @@ class DocGenerator:
                 compiled_markdown += line
                 continue
 
+            parsed = line
             for parser in self.parsers + self._default_parsers:
-                parsed = parser(self, line)
-                if parsed is not None:
-                    compiled_markdown += parsed
-                    break
-            if parsed is None:
-                compiled_markdown += line
+                parsed = parser(self, parsed)
+
+            compiled_markdown += parsed
         return compiled_markdown
 
     def _create_folder_structure(self, cwd):

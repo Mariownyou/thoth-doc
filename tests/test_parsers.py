@@ -1,6 +1,6 @@
 import os
 from unittest import TestCase
-from thoth_doc.parsers import env_var_parser
+from thoth_doc.parsers import add_image_host_to_image_links, env_var_parser
 
 
 class EnvVarParserTestCase(TestCase):
@@ -26,3 +26,15 @@ class EnvVarParserTestCase(TestCase):
         line = 'some text `ENV_VAR_NAME=[$env.ENV_VAR_NAME]` some text'
         parsed = env_var_parser(None, line)
         self.assertEqual(parsed, 'some text `ENV_VAR_NAME=env_var_value` some text')
+
+
+class MockGenerator:
+    image_host = 'https://example.com'
+
+
+class ImmageHostParserTestCase(TestCase):
+    def setUp(self):
+        os.environ['ENV_VAR_NAME'] = 'env_var_value'
+
+    def test_one_match(self):
+        pass

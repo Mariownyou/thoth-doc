@@ -5,7 +5,7 @@ from thoth_doc.utils import get_docstring, remove_whitespaces
 
 
 def add_image_host_to_image_links(generator, line):
-    ''' Adds image host to image links. '''
+    ''' Adds image host to image links. you need to set image_host attribute on generator instance. '''
 
     host = getattr(generator, 'image_host', None)
     matches = re.findall(r'(!\[.*?\]\((.*?)\))', line)
@@ -13,7 +13,7 @@ def add_image_host_to_image_links(generator, line):
         for match in matches:
             line = line.replace(match[1], f'{host}/{match[1]}')
         return line
-    return None
+    return line
 
 
 def code_reference_parser(_, line):
@@ -28,7 +28,7 @@ def code_reference_parser(_, line):
             docstring = docstring.replace('\n', '\n\n')
             line = line.replace(match[0], docstring)
         return line
-    return None
+    return line
 
 
 def env_var_parser(_, line):
@@ -40,7 +40,7 @@ def env_var_parser(_, line):
             value = os.environ.get(var_name)
             line = line.replace(match, str(value))
         return line
-    return None
+    return line
 
 
 def django_settings_parser(_, line):
@@ -56,4 +56,4 @@ def django_settings_parser(_, line):
             value = getattr(settings, setting_name)
             line = line.replace(match, str(value))
         return line
-    return None
+    return line

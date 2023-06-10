@@ -4,18 +4,6 @@ import re
 from thoth_doc.utils import get_docstring, remove_whitespaces
 
 
-def add_image_host_to_image_links(generator, line):
-    ''' Adds image host to image links. you need to set image_host attribute on generator instance. '''
-
-    host = getattr(generator, 'image_host', None)
-    matches = re.findall(r'(!\[.*?\]\((.*?)\))', line)
-    if matches and host:
-        for match in matches:
-            line = line.replace(match[1], f'{host}/{match[1]}')
-        return line
-    return line
-
-
 def code_reference_parser(_, line):
     ''' Parses [@code/main.py#Class.method] syntax. Extacts docstring. '''
 

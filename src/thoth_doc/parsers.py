@@ -15,7 +15,6 @@ def code_reference_parser(_, line):
             docstring = remove_whitespaces(docstring)
             docstring = docstring.replace('\n', '\n\n')
             line = line.replace(match[0], docstring)
-        return line
     return line
 
 
@@ -27,7 +26,6 @@ def env_var_parser(_, line):
         for match, var_name in matches:
             value = os.environ.get(var_name)
             line = line.replace(match, str(value))
-        return line
     return line
 
 
@@ -43,5 +41,4 @@ def django_settings_parser(_, line):
         for match, setting_name in matches:
             value = getattr(settings, setting_name)
             line = line.replace(match, str(value))
-        return line
     return line
